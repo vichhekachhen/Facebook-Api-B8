@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
@@ -45,4 +46,11 @@ Route::post('/post/create',[PostController::class,'store'])->name('post.create')
 Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
 Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
 
-
+// Likes routes
+Route::prefix('like')->group(function () {
+    Route::get('/list', [LikeController::class, 'index'])->name('like.list');
+    Route::get('/show/{id}', [LikeController::class, 'show'])->name('like.show');
+    Route::post('/create', [LikeController::class, 'store'])->name('like.create');
+    Route::put('/update/{id}', [LikeController::class, 'update'])->name('like.update');
+    Route::delete('/delete/{id}', [LikeController::class, 'destroy'])->name('like.destroy');
+});
