@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\api\PostController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 });
 
 // Authentication routes
@@ -30,5 +32,17 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+//user
+Route::get('user/list', [UserController::class, 'index'])->name('user.list');
+Route::delete('user/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
+Route::put('user/update/{id}', [UserController::class, 'update'])->name('user.update');
+Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show');
+
+
+//posts
+Route::get('/post/list',[PostController::class,'index'])->name('post.list');
+Route::post('/post/create',[PostController::class,'store'])->name('post.create');
+Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
+Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
 
 
