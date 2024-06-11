@@ -13,8 +13,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::list();
-        return response(['sucess' => true, 'data' => $posts], 200);
+        $posts = Post::all();
+        return response(['success' => true, 'data' => $posts], 200);
 
     }
 
@@ -41,7 +41,8 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        Post::store($request, $id);
+        return ["success" => true, "Message" => "update post successfully"];
     }
 
     /**
@@ -49,6 +50,8 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+        return ["success" => true, "Message" => "post deleted successfully"];
     }
 }

@@ -37,6 +37,8 @@ Route::get('user/list', [UserController::class, 'index'])->name('user.list');
 
 
 //posts
-Route::get('/post/list',[PostController::class,'index'])->name('post.index');
-Route::get('/post/create',[PostController::class,'store'])->name('post.store');
+Route::get('/post/list',[PostController::class,'index'])->name('post.list');
+Route::post('/post/create',[PostController::class,'store'])->name('post.create');
+Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
+Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
 
