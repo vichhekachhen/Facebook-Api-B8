@@ -34,11 +34,9 @@ Route::group(['prefix' => 'auth'], function () {
 
 //user
 Route::get('user/list', [UserController::class, 'index'])->name('user.list');
-<<<<<<< HEAD
 Route::delete('user/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
 Route::put('user/update/{id}', [UserController::class, 'update'])->name('user.update');
 Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show');
-=======
 
 
 //posts
@@ -46,5 +44,4 @@ Route::get('/post/list',[PostController::class,'index'])->name('post.list');
 Route::post('/post/create',[PostController::class,'store'])->name('post.create');
 Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
 Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
->>>>>>> 44463947f700d01c1d3cab1299453773596cb8cc
 
