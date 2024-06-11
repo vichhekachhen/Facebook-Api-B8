@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -17,22 +18,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 });
 
 // register/login/logout/user
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+  Route::post('register', [AuthController::class, 'register']);
+  Route::post('login', [AuthController::class, 'login']);
 
-    Route::group(['middleware' => 'auth:sanctum'], function() {
-      Route::get('logout', [AuthController::class, 'logout']);
-      Route::get('user', [AuthController::class, 'user']);
-    });
+  Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('logout', [AuthController::class, 'logout']);
+    Route::get('user', [AuthController::class, 'user']);
+  });
 });
 
 //user
 Route::get('user/list', [UserController::class, 'index'])->name('user.list');
 
 
+//posts
+Route::get('/post/list',[PostController::class,'index'])->name('post.index');
+Route::get('/post/create',[PostController::class,'store'])->name('post.store');
 
