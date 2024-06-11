@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -12,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        
+        $user = User::list();
+        $user = UserResource::collection($user);
+        return response(['sucess' => true, 'data' =>$user], 200);
     }
 
     /**
@@ -28,7 +32,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        dd(1);
     }
 
     /**
@@ -36,7 +40,8 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        User::store($request,$id);
+        return ["success" => true, "Message" =>"User updated successfully"];
     }
 
     /**
@@ -44,6 +49,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return ["success" => true, "Message" =>"The user deleted successfully"];
     }
 }

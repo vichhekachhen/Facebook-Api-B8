@@ -33,6 +33,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 //user
 Route::get('user/list', [UserController::class, 'index'])->name('user.list');
-
-
+Route::delete('user/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
+Route::put('user/update/{id}', [UserController::class, 'update'])->name('user.update');
+Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show');
 
