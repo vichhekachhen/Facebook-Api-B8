@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $user = User::list();
-        $user = UserResource::collection($user);
-        return response(['sucess' => true, 'data' =>$user], 200);
+        $comment = Comment::list();
+        $comment = CommentResource::collection($comment);
+        return response(['sucess' => true, 'data' =>$comment], 200);
     }
 
     /**
@@ -24,7 +24,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Comment::store($request);
+        return ["success" => true, "Message" =>"Comment created successfully"];
     }
 
     /**
@@ -32,7 +33,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        dd(1);
+        //
     }
 
     /**
@@ -40,21 +41,17 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        User::store($request,$id);
+        Comment::store($request,$id);
         return ["success" => true, "Message" =>"User updated successfully"];
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        $user = User::find($id);
-        if (is_null($user)) {
-            return response()->json(['message' => 'User Not Found'], 404);
-        }
-
-        $user->delete();
-        return response(["success" => true, "Message" =>"The comment deleted successfully"])->json(null, 200);
+        $comment = Comment::find($id);
+        $comment->delete();
+        return ["success" => true, "Message" =>"The comment deleted successfully"];
     }
 }

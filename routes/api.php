@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -36,4 +37,11 @@ Route::get('user/list', [UserController::class, 'index'])->name('user.list');
 Route::delete('user/delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
 Route::put('user/update/{id}', [UserController::class, 'update'])->name('user.update');
 Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show');
+
+//comment
+Route::get('comment/list', [CommentController::class, 'index'])->name('comment.list');
+Route::post('comment/create', [CommentController::class, 'store'])->name('comment.create');
+Route::delete('comment/delete/{id}', [CommentController::class, 'destroy'])->name('comment.delete');
+Route::put('comment/update/{id}', [CommentController::class, 'update'])->name('comment.update');
+Route::get('comment/show/{id}', [CommentController::class, 'show'])->name('comment.show');
 
