@@ -39,9 +39,10 @@ Route::put('user/update/{id}', [UserController::class, 'update'])->name('user.up
 Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show');
 
 
-//posts
-Route::get('/post/list',[PostController::class,'index'])->name('post.list');
-Route::post('/post/create',[PostController::class,'store'])->name('post.create');
-Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
-Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
-
+// Posts routes
+Route::prefix('post')->group(function () {
+  Route::get('/list', [PostController::class, 'index'])->name('post.list');
+  Route::post('/create', [PostController::class, 'store'])->name('post.create');
+  Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
+  Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+});
