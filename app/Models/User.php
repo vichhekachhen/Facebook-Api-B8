@@ -40,11 +40,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-<<<<<<< HEAD
-        'password' => 'hashed',
-=======
       
->>>>>>> main
     ];
     public static function list(){
         return self::all();
@@ -55,8 +51,4 @@ class User extends Authenticatable
         return $data;
         
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 }
