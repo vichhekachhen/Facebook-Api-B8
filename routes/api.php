@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -18,17 +20,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 });
 
-// register/login/logout/user
-Route::group(['prefix' => 'auth'], function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+// Authentication routes
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
 
     Route::group(['middleware' => 'auth:sanctum'], function() {
-      Route::get('logout', [AuthController::class, 'logout']);
-      Route::get('user', [AuthController::class, 'user']);
+        Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
+        Route::get('user', [AuthController::class, 'user'])->name('auth.user');
     });
 });
 
@@ -44,4 +46,20 @@ Route::post('comment/create', [CommentController::class, 'store'])->name('commen
 Route::delete('comment/delete/{id}', [CommentController::class, 'destroy'])->name('comment.delete');
 Route::put('comment/update/{id}', [CommentController::class, 'update'])->name('comment.update');
 Route::get('comment/show/{id}', [CommentController::class, 'show'])->name('comment.show');
+
+
+//posts
+Route::get('/post/list',[PostController::class,'index'])->name('post.list');
+Route::post('/post/create',[PostController::class,'store'])->name('post.create');
+Route::put('/post/update/{id}',[PostController::class,'update'])->name('post.update');
+Route::delete('/post/delete/{id}',[PostController::class,'destroy'])->name('post.destroy');
+
+// Likes routes
+Route::prefix('like')->group(function () {
+    Route::get('/list', [LikeController::class, 'index'])->name('like.list');
+    Route::get('/show/{id}', [LikeController::class, 'show'])->name('like.show');
+    Route::post('/create', [LikeController::class, 'store'])->name('like.create');
+    Route::put('/update/{id}', [LikeController::class, 'update'])->name('like.update');
+    Route::delete('/delete/{id}', [LikeController::class, 'destroy'])->name('like.destroy');
+});
 

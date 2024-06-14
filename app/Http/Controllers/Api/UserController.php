@@ -55,6 +55,6 @@ class UserController extends Controller
         }
 
         $user->delete();
-        return response(["success" => true, "Message" =>"The comment deleted successfully"])->json(null, 200);
+        return response(["success" => true, "Message" =>"The user deleted successfully"]);
     }
 }
