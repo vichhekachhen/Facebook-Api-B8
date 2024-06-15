@@ -11,21 +11,14 @@ class Like extends Model
     use HasFactory, SoftDeletes;
     protected $fillable = ['user_id', 'post_id'];
 
-    public static function store($request, $id = null)
+    public function user()
     {
-        $data = $request->only('user_id', 'post_id');
-
-        if ($id) {
-            $like = self::find($id);
-            if ($like) {
-                $like->update($data);
-                return $like;
-            } else {
-                return null; 
-            }
-        } else {
-            $like = self::create($data);
-            return $like;
-        }
+        return $this->belongsTo(User::class);
     }
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
+
 }

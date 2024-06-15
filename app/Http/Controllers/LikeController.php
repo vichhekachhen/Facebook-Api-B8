@@ -3,66 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class LikeController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $likes = Like::all(); 
-        return response(['success' => true, 'data' => $likes], 200);
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/likes",
+     *     tags={"Like"},
+     *     summary="Create or delete a like",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="post_id",
+     *                     type="integer"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Store a newly created resource in storage.")
+     * )
      */
     public function store(Request $request)
     {
-        $like = Like::create($request->all()); 
-        return response(['success' => true, 'message' => 'Like created successfully'], 201);
-    }
+        // Validate the request data
+        $validator = Validator::make($request->all(), [
+            'post_id' => 'required|exists:posts,id',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $like = Like::find($id);
-        if ($like) {
-            return response(['success' => true, 'data' => $like], 200);
-        } else {
-            return response(['success' => false, 'message' => 'Like not found'], 404);
+        // Check if the validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $like = Like::find($id);
-        if ($like) {
-            $like->update($request->all());
-            return response(['success' => true, 'message' => 'Like updated successfully'], 200);
-        } else {
-            return response(['success' => false, 'message' => 'Like not found'], 404);
-        }
-    }
+        // Get the validated data
+        $data = $validator->validated();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $like = Like::find($id);
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Check if the like already exists
+        $like = Like::where('user_id', $user->id)
+            ->where('post_id', $data['post_id'])
+            ->first();
+
         if ($like) {
+            // If the like exists, delete it (unlike)
             $like->delete();
-            return response(['success' => true, 'message' => 'Like deleted successfully'], 200);
+            $message = 'You unliked a post';
         } else {
-            return response(['success' => false, 'message' => 'Like not found'], 404);
+            // If the like does not exist, create a new like
+            Like::create([
+                'user_id' => $user->id,
+                'post_id' => $data['post_id'],
+            ]);
+            $message = 'You liked a post';
         }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+        ], 200);
     }
+
+    /**
+     * @OA\Schema(
+     *     schema="likeRequest",
+     *     @OA\Property(property="post_id", type="integer", required=true)
+     * )
+     */
 }

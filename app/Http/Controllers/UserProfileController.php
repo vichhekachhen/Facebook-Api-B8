@@ -137,7 +137,7 @@ class UserProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'string|max:255',
             'email' => 'string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'string|min:8|confirmed',
+            // 'password' => 'string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -147,9 +147,9 @@ class UserProfileController extends Controller
         $user->name = $request->get('name', $user->name);
         $user->email = $request->get('email', $user->email);
 
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->get('password'));
-        }
+        // if ($request->has('password')) {
+        //     $user->password = bcrypt($request->get('password'));
+        // }
 
         $user->save();
 
