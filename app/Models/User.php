@@ -40,15 +40,18 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-      
+
     ];
-    public static function list(){
-        return self::all();
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
-    public static function store($request, $id = null){
-        $data = $request->only('name', 'email');
-        $data = self::updateOrCreate(['id' => $id], $data);
-        return $data;
-        
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 }
