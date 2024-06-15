@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException as EloquentModelNotFoundException;
 
 class PostController extends Controller
 {
@@ -48,6 +47,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $post = new Post();
+        $post->user_id = $request->user()->id;
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->user()->associate(auth()->user());
