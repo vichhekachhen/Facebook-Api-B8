@@ -16,6 +16,7 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/register",
+     *     tags={"Register"},
      *     summary="Register a new user",
      *     @OA\RequestBody(
      *         @OA\JsonContent(
@@ -73,6 +74,7 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/login",
+     *     tags={"Register"},
      *     summary="Login a user",
      *     @OA\RequestBody(
      *         @OA\JsonContent(
@@ -134,6 +136,7 @@ class AuthController extends Controller
     /**
      * @OA\Get(
      *     path="/api/auth/user",
+     *     tags={"Register"},
      *     summary="Get the authenticated user",
      *     security={{"sanctum": {}}},
      *     @OA\Response(
@@ -158,6 +161,7 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/api/auth/logout",
+     *     tags={"Register"},
      *     summary="Logout the authenticated user",
      *     security={{"sanctum": {}}},
      *     @OA\Response(

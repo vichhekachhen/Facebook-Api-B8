@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Like;
 use Illuminate\Http\Request;
 
@@ -13,7 +12,7 @@ class LikeController extends Controller
      */
     public function index()
     {
-        $likes = Like::all(); // Assuming Like model has an 'all' method to retrieve all likes
+        $likes = Like::all(); 
         return response(['success' => true, 'data' => $likes], 200);
     }
 
@@ -22,7 +21,7 @@ class LikeController extends Controller
      */
     public function store(Request $request)
     {
-        $like = Like::create($request->all()); // Assuming Like model has a 'create' method to create a new like
+        $like = Like::create($request->all()); 
         return response(['success' => true, 'message' => 'Like created successfully'], 201);
     }
 

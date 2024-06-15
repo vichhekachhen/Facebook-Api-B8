@@ -8,14 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
-    protected $fillable = ['comment'];
-    public static function list(){
-        return self::all();
+
+    protected $fillable = ['content', 'user_id', 'post_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
-    public static function store($request, $id = null){
-        $data = $request->only('comment');
-        $data = self::updateOrCreate(['id' => $id], $data);
-        return $data;
-        
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
     }
 }

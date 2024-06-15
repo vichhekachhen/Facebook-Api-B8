@@ -40,7 +40,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+      
     ];
     public static function list(){
         return self::all();

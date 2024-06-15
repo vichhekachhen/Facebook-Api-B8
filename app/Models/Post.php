@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'body', 'image'];
-    public static function list()
+
+    protected $fillable = ['title', 'content'];
+
+    public function user()
     {
-        return self::all();
+        return $this->belongsTo(User::class);
     }
 
-    public static function store($request, $id=null)
+    public function comments()
     {
-        $data = $request->only('title', 'body', 'image');
-        $data = self::updateOrCreate(['id' => $id], $data);
-        return $data;
+        return $this->hasMany(Comment::class);
     }
 }
