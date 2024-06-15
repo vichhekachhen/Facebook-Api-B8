@@ -32,33 +32,35 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('auth.login');
 });
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
-    Route::get('/auth/user', [AuthController::class, 'user'])->name('auth.user');
+// Post routes
+Route::prefix('posts')->group(function () {
+    Route::get('/list', [PostController::class, 'index'])->name('posts.index');  //see list post from other
+    Route::get('/{id}', [PostController::class, 'show'])->name('posts.show');
+});
 
-     // User routes
-    Route::prefix('users')->group(function () {
-        Route::get('/list', [UserProfileController::class, 'index'])->name('user.profile.list');
-        Route::get('/{id}', [UserProfileController::class, 'show']);
-        Route::put('/{id}', [UserProfileController::class, 'update']);
-        Route::delete('/profile', [UserProfileController::class, 'destroy'])->name('user.profile.delete');
-    });
+//comment
+Route::get('/api/posts/{id}/comments', [CommentController::class, 'getUserCommentsOnPost'])->name('comments.user')->middleware('auth:sanctum');
+
+
+
+//Login as a user
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::get('/auth/viewProfile', [AuthController::class, 'user'])->name('auth.view');
+    Route::put('/auth/update', [AuthController::class, 'updateUser'])->name('auth.update');
+
 
     // Post routes
     Route::prefix('posts')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('posts.index');
-        Route::post('/', [PostController::class, 'store'])->name('posts.store');
-        Route::get('/{id}', [PostController::class, 'show'])->name('posts.show');
-        Route::put('/{id}', [PostController::class, 'update'])->name('posts.update');
-        Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::get('/', [PostController::class, 'ownPost'])->name('posts.ownPost');  //see my own post
+        Route::post('/create', [PostController::class, 'store'])->name('posts.store');
+        Route::put('/update/{id}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
     });
 
-    //Comment routes
-    Route::group(['prefix' => 'posts/{postId}/comments'], function () {
-        Route::post('/', [CommentController::class, 'store'])->name('comments.store');
-    });
     Route::group(['prefix' => 'comments'], function () {
-        Route::put('/{id}', [CommentController::class, 'update'])->name('comments.update');
+        Route::post('/post/{id}', [CommentController::class, 'store'])->name('comments.store');
+        Route::put('/update/{id}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
 
@@ -78,5 +80,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::put('//{id}/accept', [FriendRequestController::class, 'accept'])->middleware('auth:api');
         Route::put('//{id}/decline', [FriendRequestController::class, 'decline'])->middleware('auth:api');
     });
-    
+});
+// Admin User routes
+Route::prefix('users')->group(function () {
+    Route::get('/list', [UserProfileController::class, 'index'])->name('user.profile.list');
+    Route::get('/{id}', [UserProfileController::class, 'show']);
+    Route::put('/{id}', [UserProfileController::class, 'update']);
 });

@@ -22,6 +22,23 @@ class PostController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/posts",
+     *     tags={"Post"},
+     *     summary="List all posts by the authenticated user",
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response="200", description="Display a listing of the user's posts.")
+     * )
+     */
+    public function ownPost(Request $request)
+    {
+        $user = $request->user();
+        $posts = $user->posts()->get();
+
+        return response()->json(['success' => true, 'data' => $posts]);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/posts",
      *     tags={"Post"},
@@ -142,5 +159,4 @@ class PostController extends Controller
 
         return ["success" => true, "Message" => "Post deleted successfully"];
     }
-
 }
