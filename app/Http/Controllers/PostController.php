@@ -209,4 +209,28 @@ class PostController extends Controller
 
         return ["success" => true, "Message" => "Post deleted successfully"];
     }
+
+    //share post
+    public function share(Request $request)
+    {
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $user = $request->user();
+        $sharedPost = Post::find($request->input('post_id'));
+
+        $post = new Post();
+        $post->user_id = $user->id;
+        $post->title = $sharedPost->title;
+        $post->content = $sharedPost->content;
+        $post->sharedPost()->associate($sharedPost);
+        $post->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post shared successfully',
+            'post' => $post,
+        ], 201);
+    }
 }

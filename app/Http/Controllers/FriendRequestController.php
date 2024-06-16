@@ -5,10 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\FriendRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 
 class FriendRequestController extends Controller
 {
+
+    //list friends
+    public function index()
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            $friends = $user->friends;
+            return response()->json($friends);
+        } else {
+            return response()->json(['message' => 'User has no friends'], 404);
+        }
+    }
     /**
      * @OA\Post(
      *     path="/friend-requests",

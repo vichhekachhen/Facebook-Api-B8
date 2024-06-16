@@ -59,5 +59,10 @@ class User extends Authenticatable
         return $this->hasMany(FriendRequest::class);
     }
 
-   
+    public function Listfriends()
+    {
+        return $this->hasMany(Friend::class, 'user_id', 'id')
+            ->orWhere('friend_id', $this->id)
+            ->where('status', 1);
+    }
 }

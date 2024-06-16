@@ -23,9 +23,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 // Admin User routes
 Route::prefix('users')->group(function () {
@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/create', [PostController::class, 'store'])->name('posts.store');
         Route::put('/update/{id}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::post('/{id}/share', [PostController::class, 'share'])->name('posts.share'); //share post
     });
 
     //Comment Routes
@@ -73,7 +74,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //like and unlike routes
     Route::group(['prefix' => 'likes'], function () {
-        Route::post('/', [LikeController::class, 'store'])->name('like.store'); 
+        Route::post('/', [LikeController::class, 'store'])->name('like.store');
     });
 
     //Friend-Request Routes
@@ -81,3 +82,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/friend-requests/{id}/accept', [FriendRequestController::class, 'accept']);
     Route::post('/friend-requests/{id}/decline', [FriendRequestController::class, 'decline']);
 });
+ //List Friend Routes
+Route::get('/friends', [FriendRequestController::class, 'index']);
+
