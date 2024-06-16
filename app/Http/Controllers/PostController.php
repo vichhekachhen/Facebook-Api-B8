@@ -106,41 +106,68 @@ class PostController extends Controller
         return ["success" => true, "Message" => "Post created successfully"];
     }
 
-    /**
+     /**
      * @OA\Get(
-     *     path="/api/show/{id}",
-     *     tags={"Post"},
-     *     summary="Get a specific post",
+     *     path="/api/posts/show/{id}",
+     *     summary="Get a post by ID",
+     *     description="Returns a post along with its comments",
+     *     operationId="getPostById",
+     *     tags={"Posts"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
+     *         description="ID of the post to retrieve",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="title", type="string"),
-     *                 @OA\Property(property="content", type="string"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="post", type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="title", type="string", example="hello world"),
+     *                     @OA\Property(property="content", type="string", example="here is my first post!......"),
+     *                     @OA\Property(property="user_id", type="integer", example=1),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-06-16T08:13:03.000000Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-06-16T08:13:03.000000Z"),
+     *                     @OA\Property(property="comments", type="array",
+     *                         @OA\Items(type="object",
+     *                             @OA\Property(property="id", type="integer", example=1),
+     *                             @OA\Property(property="post_id", type="integer", example=1),
+     *                             @OA\Property(property="user_id", type="integer", example=1),
+     *                             @OA\Property(property="content", type="string", example="So great!")
+     *                         )
+     *                     )
+     *                 )
      *             )
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Post not found"
      *     )
      * )
      */
     public function show($id)
-    {
-        $post = Post::findOrFail($id);
-        return response(['success' => true, 'data' => $post], 200);
-    }
+{
+    $post = Post::with(['comments' => function($query) {
+        $query->select('id', 'post_id', 'user_id', 'content');
+    }])->findOrFail($id);
+
+    $responseData = [
+        'success' => true,
+        'data' => [
+            'post' => $post,
+        ],
+    ];
+
+    return response($responseData, 200);
+}
 
     /**
      * @OA\Put(

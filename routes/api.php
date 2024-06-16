@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
@@ -81,3 +80,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/friend-requests/{id}/accept', [FriendRequestController::class, 'accept']);
     Route::post('/friend-requests/{id}/decline', [FriendRequestController::class, 'decline']);
 });
+
