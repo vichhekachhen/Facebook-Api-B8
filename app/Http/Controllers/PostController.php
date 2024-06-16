@@ -76,6 +76,7 @@ class PostController extends Controller
     /**
      * @OA\Post(
      *     path="/api/posts/create",
+     *     tags={"Post"},
      *     summary="Create a new post",
      *     @OA\RequestBody(
      *         required=true,
@@ -183,6 +184,7 @@ class PostController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/posts/delete/{id}",
+     *     tags={"Post"},
      *     summary="Delete a post",
      *     @OA\Parameter(
      *         name="id",

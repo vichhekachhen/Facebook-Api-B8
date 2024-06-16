@@ -831,6 +831,9 @@
         },
         "/api/posts/create": {
             "post": {
+                "tags": [
+                    "Post"
+                ],
                 "summary": "Create a new post",
                 "operationId": "405b2ee7bc979425b153c46defe501f5",
                 "requestBody": {
@@ -1002,6 +1005,9 @@
         },
         "/api/posts/delete/{id}": {
             "delete": {
+                "tags": [
+                    "Post"
+                ],
                 "summary": "Delete a post",
                 "operationId": "a5eec1ec8a8df68ade67bd8b3bb3bf69",
                 "parameters": [
