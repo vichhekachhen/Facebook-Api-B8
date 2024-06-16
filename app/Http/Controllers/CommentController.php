@@ -9,65 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/posts/{postId}/comments",
-     *     tags={"Comment"},
-     *     summary="Get comments for a post",
-     *     description="Retrieve all comments for the specified post",
-     *     @OA\Parameter(
-     *         name="postId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful response",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="content", type="string"),
-     *                 @OA\Property(property="user", type="object", @OA\Property(property="name", type="string")),
-     *                 @OA\Property(property="created_at", type="string", format="date-time")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Post not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Post not found")
-     *         )
-     *     )
-     * )
-     */
-    public function index($postId)
-    {
-        $post = Post::find($postId);
 
-        if ($post) {
-            $comments = $post->comments()->with('user')->get();
-            return response()->json($comments);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Post not found'
-            ], 404);
-        }
-    }
 
     /**
      * @OA\Post(
-     *     path="/posts/{postId}/comments",
-     *      tags={"Comment"},
-     *     summary="Store a new comment",
-     * 
-     *     description="Create a new comment for the specified post",
+     *     path="/api/comments/posts/{id}",
+     *     tags={"Comment"},
+     *     summary="Create a new comment on a post",
+     *     description="Creates a new comment on the specified post",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="postId",
      *         in="path",
@@ -77,61 +27,181 @@ class CommentController extends Controller
      *         )
      *     ),
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="content", type="string", example="This is a new comment.")
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     description="The content of the new comment"
+     *                 ),
+     *                 required={"content"}
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="content", type="string", example="This is a new comment."),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="post_id", type="integer", example=1),
-     *             @OA\Property(property="created_at", type="string", format="date-time"),
-     *             @OA\Property(property="updated_at", type="string", format="date-time")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Post not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Post not found")
+     *             @OA\Property(
+     *                 property="id",
+     *                 type="integer",
+     *                 description="The ID of the new comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="content",
+     *                 type="string",
+     *                 description="The content of the new comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="integer",
+     *                 description="The ID of the user who created the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="post_id",
+     *                 type="integer",
+     *                 description="The ID of the post the comment was created on"
+     *             ),
+     *             @OA\Property(
+     *                 property="created_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was created"
+     *             ),
+     *             @OA\Property(
+     *                 property="updated_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was last updated"
+     *             )
      *         )
      *     )
      * )
      */
     public function store(Request $request, $postId)
     {
-        $post = Post::findOrFail($postId);
+        $validatedData = $request->validate([
+            'content' => 'required|string',
+        ]);
 
+        $post = Post::findOrFail($postId);
         $comment = $post->comments()->create([
-            'content' => $request->input('content'),
-            'user_id' => auth()->id(),
+            'content' => $validatedData['content'],
+            'user_id' => $request->user()->id,
         ]);
 
         return response()->json($comment, 201);
     }
 
     /**
-     * @OA\Delete(
-     *     path="/posts/{postId}/comments/{commentId}",
+     * @OA\Put(
+     *     path="/api/comments/update/{id}",
      *     tags={"Comment"},
-     *     summary="Delete a comment",
-     *     description="Delete the specified comment for the given post",
+     *     summary="Update a comment",
+     *     description="Updates the specified comment",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
-     *         name="postId",
+     *         name="id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     description="The new content of the comment"
+     *                 ),
+     *                 required={"content"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="id",
+     *                 type="integer",
+     *                 description="The ID of the updated comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="content",
+     *                 type="string",
+     *                 description="The updated content of the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="integer",
+     *                 description="The ID of the user who created the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="post_id",
+     *                 type="integer",
+     *                 description="The ID of the post the comment was created on"
+     *             ),
+     *             @OA\Property(
+     *                 property="created_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was created"
+     *             ),
+     *             @OA\Property(
+     *                 property="updated_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was last updated"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 description="The error message indicating the user is not authorized to update the comment"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function update(Request $request, $id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        // Check if the user is the owner of the comment
+        if ($comment->user_id !== $request->user()->id) {
+            return response()->json(['error' => 'You are not authorized to update this comment.'], 403);
+        }
+
+        $validatedData = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $comment->update([
+            'content' => $validatedData['content'],
+        ]);
+
+        return response()->json($comment, 200);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/comments/{id}",
+     *     tags={"Comment"},
+     *     summary="Delete a comment",
+     *     description="Deletes the specified comment",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
-     *         name="commentId",
+     *         name="id",
      *         in="path",
      *         required=true,
      *         @OA\Schema(
@@ -142,42 +212,44 @@ class CommentController extends Controller
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Comment deleted successfully")
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 description="A boolean indicating whether the deletion was successful"
+     *             ),
+     *             @OA\Property(
+     *                 property="Message",
+     *                 type="string",
+     *                 description="A message indicating the comment was deleted successfully"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Comment not found",
+     *         response=403,
+     *         description="Forbidden",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Comment not found")
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 description="The error message indicating the user is not authorized to delete the comment"
+     *             )
      *         )
      *     )
      * )
      */
-    public function destroy($postId, $commentId)
-    {
-        $comment = Comment::where('post_id', $postId)->where('id', $commentId)->first();
 
-        if ($comment) {
-            if ($comment->user_id == Auth::user()->id) {
-                $comment->delete();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Comment deleted successfully'
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not authorized to delete this comment'
-                ], 403);
-            }
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Comment not found'
-            ], 404);
+    public function destroy(Request $request, $id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        // Check if the user is the owner of the comment
+        if ($comment->user_id !== $request->user()->id) {
+            return response()->json(['error' => 'You are not authorized to delete this comment.'], 403);
         }
+
+        $comment->delete();
+
+        return ["success" => true, "Message" => "Post deleted successfully"];
     }
+
 }

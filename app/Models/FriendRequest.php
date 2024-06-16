@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FriendRequest extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'sender_id',
         'recipient_id',
@@ -23,5 +20,17 @@ class FriendRequest extends Model
     public function recipient()
     {
         return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    public function accept()
+    {
+        $this->status = 'accepted';
+        $this->save();
+    }
+
+    public function decline()
+    {
+        $this->status = 'declined';
+        $this->save();
     }
 }
