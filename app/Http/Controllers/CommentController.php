@@ -13,7 +13,7 @@ class CommentController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/posts/{postId}/comments",
+     *     path="/api/comments/posts/{id}",
      *     tags={"Comment"},
      *     summary="Create a new comment on a post",
      *     description="Creates a new comment on the specified post",
@@ -96,7 +96,7 @@ class CommentController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/comments/{id}",
+     *     path="/api/comments/update/{id}",
      *     tags={"Comment"},
      *     summary="Update a comment",
      *     description="Updates the specified comment",
@@ -195,7 +195,7 @@ class CommentController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/comments/{id}",
+     *     path="/api/comments/{id}",
      *     tags={"Comment"},
      *     summary="Delete a comment",
      *     description="Deletes the specified comment",

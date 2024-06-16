@@ -9,7 +9,8 @@ class PostController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/posts",
+     *     path="/api/posts/list",
+     *     tags={"Post"},
      *     summary="Get all posts",
      *     @OA\Response(
      *         response=200,
@@ -40,7 +41,8 @@ class PostController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/posts/own",
+     *     path="/api/posts",
+     *     tags={"Post"},
      *     summary="Get the authenticated user's posts",
      *     @OA\Response(
      *         response=200,
@@ -73,7 +75,7 @@ class PostController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/posts",
+     *     path="/api/posts/create",
      *     summary="Create a new post",
      *     @OA\RequestBody(
      *         required=true,
@@ -106,7 +108,8 @@ class PostController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/posts/{id}",
+     *     path="/api/show/{id}",
+     *     tags={"Post"},
      *     summary="Get a specific post",
      *     @OA\Parameter(
      *         name="id",
@@ -141,7 +144,8 @@ class PostController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/posts/{id}",
+     *     path="/api/posts/update/{id}",
+     *     tags={"Post"},
      *     summary="Update a post",
      *     @OA\Parameter(
      *         name="id",
@@ -178,7 +182,7 @@ class PostController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/posts/{id}",
+     *     path="/api/posts/delete/{id}",
      *     summary="Delete a post",
      *     @OA\Parameter(
      *         name="id",

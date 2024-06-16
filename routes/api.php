@@ -43,7 +43,7 @@ Route::prefix('auth')->group(function () {
 // Post routes
 Route::prefix('posts')->group(function () {
     Route::get('/list', [PostController::class, 'index'])->name('posts.index');  //see list post from other
-    Route::get('/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('/show/{id}', [PostController::class, 'show'])->name('posts.show');
 });
 
 //comment routes
@@ -51,9 +51,9 @@ Route::get('/api/posts/{id}/comments', [CommentController::class, 'getUserCommen
 
 //Login as a user
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
     Route::get('/auth/viewProfile', [AuthController::class, 'user'])->name('auth.view');
     Route::put('/auth/update', [AuthController::class, 'updateUser'])->name('auth.update');
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 
     // Post routes
@@ -64,15 +64,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
     });
 
+    //Comment Routes
     Route::group(['prefix' => 'comments'], function () {
         Route::post('/post/{id}', [CommentController::class, 'store'])->name('comments.store');
         Route::put('/update/{id}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
 
-    // Like Routes
+    //like and unlike routes
     Route::group(['prefix' => 'likes'], function () {
-        Route::post('/', [LikeController::class, 'store'])->name('like.store');
+        Route::post('/', [LikeController::class, 'store'])->name('like.store'); 
     });
 
     //Friend-Request Routes

@@ -121,13 +121,13 @@
                 }
             }
         },
-        "/api/auth/user": {
+        "/api/auth/viewProfile": {
             "get": {
                 "tags": [
                     "Register"
                 ],
                 "summary": "Get the authenticated user",
-                "operationId": "e23e5f9b32cba7953a224624a2a16544",
+                "operationId": "3d581afac9960614d4986004d8f449e1",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -260,14 +260,14 @@
                 ]
             }
         },
-        "/posts/{postId}/comments": {
+        "/api/comments/posts/{id}": {
             "post": {
                 "tags": [
                     "Comment"
                 ],
                 "summary": "Create a new comment on a post",
                 "description": "Creates a new comment on the specified post",
-                "operationId": "6d6bad7dd75f7451fdca3d09359148e8",
+                "operationId": "bc9e2c7b312ff785db247d15b2b2b8d0",
                 "parameters": [
                     {
                         "name": "postId",
@@ -343,14 +343,14 @@
                 ]
             }
         },
-        "/comments/{id}": {
+        "/api/comments/update/{id}": {
             "put": {
                 "tags": [
                     "Comment"
                 ],
                 "summary": "Update a comment",
                 "description": "Updates the specified comment",
-                "operationId": "e6903ffe88ec53d1900c913ecab39ab0",
+                "operationId": "edd4216b1cf62d46592169de844978f2",
                 "parameters": [
                     {
                         "name": "id",
@@ -440,14 +440,16 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/comments/{id}": {
             "delete": {
                 "tags": [
                     "Comment"
                 ],
                 "summary": "Delete a comment",
                 "description": "Deletes the specified comment",
-                "operationId": "08965db07afd6799973a7023fc640b33",
+                "operationId": "721e5dc0c32ef81276203df965767606",
                 "parameters": [
                     {
                         "name": "id",
@@ -653,9 +655,10 @@
         "/api/likes": {
             "post": {
                 "tags": [
-                    "Like"
+                    "Like&Unlike"
                 ],
-                "summary": "Create or delete a like",
+                "summary": "Like or Unlike a Post",
+                "description": "This endpoint allows a user to like or unlike a post.",
                 "operationId": "511c8161eb44f7b3479a914692d975ee",
                 "requestBody": {
                     "required": true,
@@ -664,7 +667,8 @@
                             "schema": {
                                 "properties": {
                                     "post_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -674,15 +678,54 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Store a newly created resource in storage."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "like_id": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/posts": {
+        "/api/posts/list": {
             "get": {
+                "tags": [
+                    "Post"
+                ],
                 "summary": "Get all posts",
-                "operationId": "5f292ed47bdbfa79356750be0807450c",
+                "operationId": "d23eb64665dbfd287d91a090393c6304",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -729,10 +772,67 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/posts": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Get the authenticated user's posts",
+                "operationId": "6109f6585c6ccc02369beb9585e5c095",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/posts/create": {
             "post": {
                 "summary": "Create a new post",
-                "operationId": "c2e0b0e26215e6d34ece33ebae25f7df",
+                "operationId": "405b2ee7bc979425b153c46defe501f5",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -777,62 +877,13 @@
                 }
             }
         },
-        "/posts/own": {
+        "/api/show/{id}": {
             "get": {
-                "summary": "Get the authenticated user's posts",
-                "operationId": "8117f836c89bfc6c6cdc623bb9815bbc",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "user_id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "title": {
-                                                        "type": "string"
-                                                    },
-                                                    "content": {
-                                                        "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/posts/{id}": {
-            "get": {
+                "tags": [
+                    "Post"
+                ],
                 "summary": "Get a specific post",
-                "operationId": "c8bd68bc05422c879bc2dd429ae5782b",
+                "operationId": "27d741bb696edc338ee87b0d4d69e897",
                 "parameters": [
                     {
                         "name": "id",
@@ -886,10 +937,15 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/posts/update/{id}": {
             "put": {
+                "tags": [
+                    "Post"
+                ],
                 "summary": "Update a post",
-                "operationId": "06c81121178208730e11d2f6b655e78d",
+                "operationId": "06bfd480240a8220d215e75e90d575dc",
                 "parameters": [
                     {
                         "name": "id",
@@ -942,10 +998,12 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/posts/delete/{id}": {
             "delete": {
                 "summary": "Delete a post",
-                "operationId": "54788a50da690c5ee1dfdc25425a1f87",
+                "operationId": "a5eec1ec8a8df68ade67bd8b3bb3bf69",
                 "parameters": [
                     {
                         "name": "id",

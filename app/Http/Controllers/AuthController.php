@@ -135,7 +135,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/auth/user",
+     *     path="/api/auth/viewProfile",
      *     tags={"Register"},
      *     summary="Get the authenticated user",
      *     security={{"sanctum": {}}},

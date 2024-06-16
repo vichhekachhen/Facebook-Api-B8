@@ -10,24 +10,36 @@ use Illuminate\Support\Facades\Validator;
 
 class LikeController extends Controller
 {
+
     /**
      * @OA\Post(
      *     path="/api/likes",
-     *     tags={"Like"},
-     *     summary="Create or delete a like",
+     *     summary="Like or Unlike a Post",
+     *     tags={"Like&Unlike"},
+     *     description="This endpoint allows a user to like or unlike a post.",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="post_id",
-     *                     type="integer"
-     *                 )
-     *             )
+     *         @OA\JsonContent(
+     *             @OA\Property(property="post_id", type="integer", example=1)
      *         )
      *     ),
-     *     @OA\Response(response="200", description="Store a newly created resource in storage.")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="like_id", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
      * )
      */
     public function store(Request $request)
