@@ -13,34 +13,68 @@ class CommentController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/comments/{postid}",
+     *     path="/posts/{postId}/comments",
      *     tags={"Comment"},
-     *     summary="Create a new comment for a post",
-     *     security={{"sanctum": {}}},
+     *     summary="Create a new comment on a post",
+     *     description="Creates a new comment on the specified post",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
-     *         name="post",
+     *         name="postId",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="content", type="string")
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     description="The content of the new comment"
+     *                 ),
+     *                 required={"content"}
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer"),
-     *             @OA\Property(property="content", type="string"),
-     *             @OA\Property(property="post_id", type="integer"),
-     *             @OA\Property(property="user_id", type="integer"),
-     *             @OA\Property(property="created_at", type="string", format="date-time"),
-     *             @OA\Property(property="updated_at", type="string", format="date-time")
+     *             @OA\Property(
+     *                 property="id",
+     *                 type="integer",
+     *                 description="The ID of the new comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="content",
+     *                 type="string",
+     *                 description="The content of the new comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="integer",
+     *                 description="The ID of the user who created the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="post_id",
+     *                 type="integer",
+     *                 description="The ID of the post the comment was created on"
+     *             ),
+     *             @OA\Property(
+     *                 property="created_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was created"
+     *             ),
+     *             @OA\Property(
+     *                 property="updated_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was last updated"
+     *             )
      *         )
      *     )
      * )
@@ -59,36 +93,82 @@ class CommentController extends Controller
 
         return response()->json($comment, 201);
     }
+
     /**
-     * @OA\Patch(
-     *     path="/api/comments/{id}",
+     * @OA\Put(
+     *     path="/comments/{id}",
      *     tags={"Comment"},
-     *     summary="Update an existing comment",
-     *     security={{"sanctum": {}}},
+     *     summary="Update a comment",
+     *     description="Updates the specified comment",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="content", type="string")
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     description="The new content of the comment"
+     *                 ),
+     *                 required={"content"}
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer"),
-     *             @OA\Property(property="content", type="string"),
-     *             @OA\Property(property="post_id", type="integer"),
-     *             @OA\Property(property="user_id", type="integer"),
-     *             @OA\Property(property="created_at", type="string", format="date-time"),
-     *             @OA\Property(property="updated_at", type="string", format="date-time")
+     *             @OA\Property(
+     *                 property="id",
+     *                 type="integer",
+     *                 description="The ID of the updated comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="content",
+     *                 type="string",
+     *                 description="The updated content of the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="integer",
+     *                 description="The ID of the user who created the comment"
+     *             ),
+     *             @OA\Property(
+     *                 property="post_id",
+     *                 type="integer",
+     *                 description="The ID of the post the comment was created on"
+     *             ),
+     *             @OA\Property(
+     *                 property="created_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was created"
+     *             ),
+     *             @OA\Property(
+     *                 property="updated_at",
+     *                 type="string",
+     *                 format="date-time",
+     *                 description="The date and time the comment was last updated"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 description="The error message indicating the user is not authorized to update the comment"
+     *             )
      *         )
      *     )
      * )
@@ -112,24 +192,52 @@ class CommentController extends Controller
 
         return response()->json($comment, 200);
     }
+
     /**
      * @OA\Delete(
-     *     path="/api/comments/{id}",
+     *     path="/comments/{id}",
      *     tags={"Comment"},
-     *     summary="Delete an existing comment",
-     *     security={{"sanctum": {}}},
+     *     summary="Delete a comment",
+     *     description="Deletes the specified comment",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\Response(
-     *         response=204,
-     *         description="Successful response"
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 description="A boolean indicating whether the deletion was successful"
+     *             ),
+     *             @OA\Property(
+     *                 property="Message",
+     *                 type="string",
+     *                 description="A message indicating the comment was deleted successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 description="The error message indicating the user is not authorized to delete the comment"
+     *             )
+     *         )
      *     )
      * )
      */
+
     public function destroy(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
@@ -144,40 +252,4 @@ class CommentController extends Controller
         return ["success" => true, "Message" => "Post deleted successfully"];
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/posts/{postId}/comments",
-     *     tags={"Comment"},
-     *     summary="Get all comments on a specific post",
-     *     security={{"sanctum": {}}},
-     *     @OA\Parameter(
-     *         name="postId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful response",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="content", type="string"),
-     *                 @OA\Property(property="post_id", type="integer"),
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time")
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function getAllCommentsOnPost(Request $request, $postId)
-    {
-        $comments = Comment::where('post_id', $postId)->get();
-
-        return response()->json($comments, 200);
-    }
 }

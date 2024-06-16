@@ -261,85 +261,12 @@
             }
         },
         "/posts/{postId}/comments": {
-            "get": {
-                "tags": [
-                    "Comment"
-                ],
-                "summary": "Get comments for a post",
-                "description": "Retrieve all comments for the specified post",
-                "operationId": "1fbe79bcb56088ff85831a055d16f189",
-                "parameters": [
-                    {
-                        "name": "postId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer"
-                                            },
-                                            "content": {
-                                                "type": "string"
-                                            },
-                                            "user": {
-                                                "properties": {
-                                                    "name": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            },
-                                            "created_at": {
-                                                "type": "string",
-                                                "format": "date-time"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
             "post": {
                 "tags": [
                     "Comment"
                 ],
-                "summary": "Store a new comment",
-                "description": "Create a new comment for the specified post",
+                "summary": "Create a new comment on a post",
+                "description": "Creates a new comment on the specified post",
                 "operationId": "6d6bad7dd75f7451fdca3d09359148e8",
                 "parameters": [
                     {
@@ -352,14 +279,16 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "content"
+                                ],
                                 "properties": {
                                     "content": {
-                                        "type": "string",
-                                        "example": "This is a new comment."
+                                        "description": "The content of the new comment",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -375,48 +304,30 @@
                                 "schema": {
                                     "properties": {
                                         "id": {
-                                            "type": "integer",
-                                            "example": 1
+                                            "description": "The ID of the new comment",
+                                            "type": "integer"
                                         },
                                         "content": {
-                                            "type": "string",
-                                            "example": "This is a new comment."
+                                            "description": "The content of the new comment",
+                                            "type": "string"
                                         },
                                         "user_id": {
-                                            "type": "integer",
-                                            "example": 1
+                                            "description": "The ID of the user who created the comment",
+                                            "type": "integer"
                                         },
                                         "post_id": {
-                                            "type": "integer",
-                                            "example": 1
+                                            "description": "The ID of the post the comment was created on",
+                                            "type": "integer"
                                         },
                                         "created_at": {
+                                            "description": "The date and time the comment was created",
                                             "type": "string",
                                             "format": "date-time"
                                         },
                                         "updated_at": {
+                                            "description": "The date and time the comment was last updated",
                                             "type": "string",
                                             "format": "date-time"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post not found"
                                         }
                                     },
                                     "type": "object"
@@ -424,28 +335,122 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
-        "/posts/{postId}/comments/{commentId}": {
-            "delete": {
+        "/comments/{id}": {
+            "put": {
                 "tags": [
                     "Comment"
                 ],
-                "summary": "Delete a comment",
-                "description": "Delete the specified comment for the given post",
-                "operationId": "9a9461d1dfc7523a073fb301d9c61275",
+                "summary": "Update a comment",
+                "description": "Updates the specified comment",
+                "operationId": "e6903ffe88ec53d1900c913ecab39ab0",
                 "parameters": [
                     {
-                        "name": "postId",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "The new content of the comment",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "The ID of the updated comment",
+                                            "type": "integer"
+                                        },
+                                        "content": {
+                                            "description": "The updated content of the comment",
+                                            "type": "string"
+                                        },
+                                        "user_id": {
+                                            "description": "The ID of the user who created the comment",
+                                            "type": "integer"
+                                        },
+                                        "post_id": {
+                                            "description": "The ID of the post the comment was created on",
+                                            "type": "integer"
+                                        },
+                                        "created_at": {
+                                            "description": "The date and time the comment was created",
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "description": "The date and time the comment was last updated",
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "The error message indicating the user is not authorized to update the comment",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
                     {
-                        "name": "commentId",
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Delete a comment",
+                "description": "Deletes the specified comment",
+                "operationId": "08965db07afd6799973a7023fc640b33",
+                "parameters": [
+                    {
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -461,12 +466,12 @@
                                 "schema": {
                                     "properties": {
                                         "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                            "description": "A boolean indicating whether the deletion was successful",
+                                            "type": "boolean"
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Comment deleted successfully"
+                                        "Message": {
+                                            "description": "A message indicating the comment was deleted successfully",
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -474,19 +479,15 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Comment not found",
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Comment not found"
+                                        "error": {
+                                            "description": "The error message indicating the user is not authorized to delete the comment",
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -494,23 +495,30 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/friend-requests": {
             "post": {
                 "tags": [
-                    "FriendRequest"
+                    "FriendRequests"
                 ],
                 "summary": "Send a friend request",
                 "operationId": "7fdf29ac79f8c06eced67e80dcd6e97e",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "recipient_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 123
                                     }
                                 },
                                 "type": "object"
@@ -526,27 +534,52 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Friend request sent"
                                         },
-                                        "friend_request": {}
+                                        "friend_request": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "sender_id": {
+                                                    "type": "integer"
+                                                },
+                                                "recipient_id": {
+                                                    "type": "integer"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "pending",
+                                                        "accepted",
+                                                        "declined"
+                                                    ]
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/friend-requests/{id}/accept": {
             "post": {
                 "tags": [
-                    "FriendRequest"
+                    "FriendRequests"
                 ],
                 "summary": "Accept a friend request",
                 "operationId": "36d7a0d8c13c57f79ab30e6f6c440f15",
@@ -568,7 +601,8 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Friend request accepted"
                                         }
                                     },
                                     "type": "object"
@@ -576,18 +610,13 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/friend-requests/{id}/decline": {
             "post": {
                 "tags": [
-                    "FriendRequest"
+                    "FriendRequests"
                 ],
                 "summary": "Decline a friend request",
                 "operationId": "4c083b9226397a3386c38836affa7eab",
@@ -609,52 +638,8 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/friends": {
-            "get": {
-                "tags": [
-                    "FriendRequest"
-                ],
-                "summary": "Lisr all friends",
-                "operationId": "c1bf826905fa8f084062f102175cd066",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "friends": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "name": {
-                                                        "type": "string"
-                                                    },
-                                                    "email": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
+                                            "type": "string",
+                                            "example": "Friend request declined"
                                         }
                                     },
                                     "type": "object"
@@ -663,47 +648,6 @@
                         }
                     }
                 }
-            }
-        },
-        "/friends/{id}": {
-            "delete": {
-                "tags": [
-                    "FriendRequest"
-                ],
-                "summary": "Remove a friend",
-                "operationId": "4cce9940ab922e720b75d841169d9f5b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Friend removed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/likes": {
@@ -735,35 +679,73 @@
                 }
             }
         },
-        "/api/posts": {
+        "/posts": {
             "get": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "List all posts",
-                "operationId": "e9eaf7df702a94f4443677bd1a36cfe6",
+                "summary": "Get all posts",
+                "operationId": "5f292ed47bdbfa79356750be0807450c",
                 "responses": {
                     "200": {
-                        "description": "Display a listing of the resource."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "post": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Create a new Post",
-                "operationId": "4a657e51a0066c64781851f2fd2651e2",
+                "summary": "Create a new post",
+                "operationId": "c2e0b0e26215e6d34ece33ebae25f7df",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "title": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "New Post"
                                     },
                                     "content": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "This is the content of the new post."
                                     }
                                 },
                                 "type": "object"
@@ -773,18 +755,84 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Store a newly created resource in storage."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "example": "Post created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/posts/{id}": {
+        "/posts/own": {
             "get": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Show Post",
-                "operationId": "b0f9d92879218f68a376b6edc6467c67",
+                "summary": "Get the authenticated user's posts",
+                "operationId": "8117f836c89bfc6c6cdc623bb9815bbc",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{id}": {
+            "get": {
+                "summary": "Get a specific post",
+                "operationId": "c8bd68bc05422c879bc2dd429ae5782b",
                 "parameters": [
                     {
                         "name": "id",
@@ -797,16 +845,51 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Display the specified resource."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "content": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "put": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Update Post",
-                "operationId": "929614537d76a081a92170a41ed3bdb3",
+                "summary": "Update a post",
+                "operationId": "06c81121178208730e11d2f6b655e78d",
                 "parameters": [
                     {
                         "name": "id",
@@ -818,15 +901,18 @@
                     }
                 ],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "title": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "Updated Post"
                                     },
                                     "content": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "This is the updated content of the post."
                                     }
                                 },
                                 "type": "object"
@@ -836,16 +922,30 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Update the specified resource in storage."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "example": "Post updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "delete": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Delete Post",
-                "operationId": "fad1726bd24cd459fc1525b67985df39",
+                "summary": "Delete a post",
+                "operationId": "54788a50da690c5ee1dfdc25425a1f87",
                 "parameters": [
                     {
                         "name": "id",
@@ -858,7 +958,24 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Remove the specified resource from storage."
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "Message": {
+                                            "type": "string",
+                                            "example": "Post deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }

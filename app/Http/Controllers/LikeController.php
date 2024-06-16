@@ -62,7 +62,7 @@ class LikeController extends Controller
             $message = 'You unliked a post';
         } else {
             // If the like does not exist, create a new like
-            Like::create([
+            $newLike = Like::create([
                 'user_id' => $user->id,
                 'post_id' => $data['post_id'],
             ]);
@@ -72,6 +72,7 @@ class LikeController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
+            'like_id' => $like ? $like->id : $newLike->id, // Return the like ID
         ], 200);
     }
 

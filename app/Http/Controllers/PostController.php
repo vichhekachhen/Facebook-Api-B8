@@ -9,10 +9,27 @@ class PostController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/posts",
-     *     tags={"Post"},
-     *     summary="List all posts",
-     *     @OA\Response(response="200", description="Display a listing of the resource.")
+     *     path="/posts",
+     *     summary="Get all posts",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="user_id", type="integer"),
+     *                     @OA\Property(property="title", type="string"),
+     *                     @OA\Property(property="content", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     )
      * )
      */
     public function index()
@@ -23,11 +40,27 @@ class PostController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/posts",
-     *     tags={"Post"},
-     *     summary="List all posts by the authenticated user",
-     *     security={{"sanctum": {}}},
-     *     @OA\Response(response="200", description="Display a listing of the user's posts.")
+     *     path="/posts/own",
+     *     summary="Get the authenticated user's posts",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="user_id", type="integer"),
+     *                     @OA\Property(property="title", type="string"),
+     *                     @OA\Property(property="content", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     )
      * )
      */
     public function ownPost(Request $request)
@@ -40,25 +73,23 @@ class PostController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/posts",
-     *     tags={"Post"},
-     *     summary="Create a new Post",
+     *     path="/posts",
+     *     summary="Create a new post",
      *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="title",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string"
-     *                 )
-     *             )
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", example="New Post"),
+     *             @OA\Property(property="content", type="string", example="This is the content of the new post.")
      *         )
      *     ),
-     *     @OA\Response(response="200", description="Store a newly created resource in storage.")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="Message", type="string", example="Post created successfully")
+     *         )
+     *     )
      * )
      */
     public function store(Request $request)
@@ -75,18 +106,31 @@ class PostController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/posts/{id}",
-     *     tags={"Post"},
-     *     summary="Show Post",
+     *     path="/posts/{id}",
+     *     summary="Get a specific post",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(response="200", description="Display the specified resource.")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="title", type="string"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     )
      * )
      */
     public function show($id)
@@ -97,33 +141,29 @@ class PostController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/posts/{id}",
-     *     tags={"Post"},
-     *     summary="Update Post",
+     *     path="/posts/{id}",
+     *     summary="Update a post",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="title",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string"
-     *                 )
-     *             )
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", example="Updated Post"),
+     *             @OA\Property(property="content", type="string", example="This is the updated content of the post.")
      *         )
      *     ),
-     *     @OA\Response(response="200", description="Update the specified resource in storage.")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="Message", type="string", example="Post updated successfully")
+     *         )
+     *     )
      * )
      */
     public function update(Request $request, $id)
@@ -138,18 +178,22 @@ class PostController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/posts/{id}",
-     *     tags={"Post"},
-     *     summary="Delete Post",
+     *     path="/posts/{id}",
+     *     summary="Delete a post",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
+     *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(response="200", description="Remove the specified resource from storage.")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="Message", type="string", example="Post deleted successfully")
+     *         )
+     *     )
      * )
      */
     public function destroy($id)
