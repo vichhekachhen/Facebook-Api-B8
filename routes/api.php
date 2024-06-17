@@ -45,8 +45,6 @@ Route::prefix('posts')->group(function () {
     Route::get('/show/{id}', [PostController::class, 'show'])->name('posts.show');
 });
 
-//comment routes
-Route::get('/api/posts/{id}/comments', [CommentController::class, 'getUserCommentsOnPost'])->name('comments.user')->middleware('auth:sanctum');
 
 //Login as a user
 Route::group(['middleware' => 'auth:sanctum'], function () {

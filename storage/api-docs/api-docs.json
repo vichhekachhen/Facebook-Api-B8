@@ -880,17 +880,19 @@
                 }
             }
         },
-        "/api/show/{id}": {
+        "/api/posts/show/{id}": {
             "get": {
                 "tags": [
-                    "Post"
+                    "Posts"
                 ],
-                "summary": "Get a specific post",
-                "operationId": "27d741bb696edc338ee87b0d4d69e897",
+                "summary": "Get a post by ID",
+                "description": "Returns a post along with its comments",
+                "operationId": "getPostById",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the post to retrieve",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -910,25 +912,60 @@
                                         },
                                         "data": {
                                             "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "user_id": {
-                                                    "type": "integer"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                                },
-                                                "content": {
-                                                    "type": "string"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
+                                                "post": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "hello world"
+                                                        },
+                                                        "content": {
+                                                            "type": "string",
+                                                            "example": "here is my first post!......"
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-06-16T08:13:03.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-06-16T08:13:03.000000Z"
+                                                        },
+                                                        "comments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "post_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "user_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "content": {
+                                                                        "type": "string",
+                                                                        "example": "So great!"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -938,6 +975,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Post not found"
                     }
                 }
             }
