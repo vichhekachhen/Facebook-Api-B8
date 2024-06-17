@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -21,12 +22,37 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     // dd($user);
+    //     Post::store($request);
+    //     return ["success" => true, "Message" => "Create Post successfully"];
+
+    // }
     public function store(Request $request)
     {
-        Post::store($request);
-        return ["success" => true, "Message" => "Create Post successfully"];
+        // Validate the incoming request data
+        $user = auth()->user();
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
 
+        // Create the post using the authenticated user's ID
+        $post = Post::create([
+            'user_id' => $user->id,
+            'title' => $validatedData['title'],
+            'body' => $request->body,
+            'image' => $request->image,
+        ]);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Post created successfully",
+            "data" => $post
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.

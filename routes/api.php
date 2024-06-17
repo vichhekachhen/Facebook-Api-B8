@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
@@ -41,8 +42,12 @@ Route::get('user/show/{id}', [UserController::class, 'show'])->name('user.show')
 
 // Posts routes
 Route::prefix('post')->group(function () {
-  Route::get('/list', [PostController::class, 'index'])->name('post.list');
-  Route::post('/create', [PostController::class, 'store'])->name('post.create');
-  Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
-  Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+    Route::get('/list', [PostController::class, 'index']);
+    Route::post('/create', [PostController::class, 'store'])->middleware('auth:sanctum');
+    Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 });
+
+//Medias
+Route::post('/photos/create', [MediaController::class, 'store']);
+
